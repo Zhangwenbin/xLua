@@ -29,6 +29,9 @@ namespace EG
         private void OnDestroy()
         {
             LuaOnDestroy();
+            LuaStart = null;
+            LuaUpdate = null;
+            LuaOnDestroy = null;
             XluaManager.Instance.OnDestroy();
         }
     }
