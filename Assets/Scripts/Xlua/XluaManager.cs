@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using XLua;
 using System.IO;
+using System.Text;
 
 namespace EG
 {
@@ -15,12 +16,14 @@ namespace EG
         // Use this for initialization
         public void Start()
             {
-                luaenv = new LuaEnv();
+            BuildLuaFileMap();
+            luaenv = new LuaEnv();
             luaenv.AddLoader((ref string filename) =>
             {
-                if (!filename.EndsWith(".lua"))
+                if (mLuaFileMap.ContainsKey(filename))
                 {
-                    filename = filename + ".lua";
+                    string fullPath = mLuaFileMap[filename];
+                    return File.ReadAllBytes(fullPath);
                 }
                 var file = Path.Combine(LuaPath, filename);
                 return File.ReadAllBytes(file);
@@ -49,5 +52,56 @@ namespace EG
             }
         }
 
+
+
+#if UNITY_EDITOR || USE_EDITOR_LUA
+        private Dictionary<string, string> mLuaFileMap = new Dictionary<string, string>();
+        private void BuildLuaFileMap()
+        {
+            StringBuilder sb = new StringBuilder();
+            WalkLuaFiles(LuaPath, delegate (string filename, string fullname) {
+                //删除filename的.lua后缀
+                filename = filename.Substring(0, filename.Length - ".lua".Length);
+                fullname = fullname.Replace("\\", "/");
+                if (mLuaFileMap.ContainsKey(filename))
+                {
+                    //已经记录过这个文件名了，说明文件名有重名，报出来
+                    string orig_filepath = mLuaFileMap[filename];
+                    sb.Clear();
+                    sb.Append("lua文件名重名：\n");
+                    sb.Append(orig_filepath);
+                    sb.Append(fullname);
+                    Debug.LogError(sb.ToString());
+                }
+                else
+                {
+                    mLuaFileMap[filename] = fullname;
+                }
+            });
+        }
+
+        private void WalkLuaFiles(string parent_dir, System.Action<string, string> callback)
+        {
+            DirectoryInfo dir = new DirectoryInfo(parent_dir);
+            FileInfo[] files = dir.GetFiles();
+            foreach (FileInfo finfo in files)
+            {
+                if (finfo.Name.EndsWith(".lua"))
+                {
+                    //是lua文件
+                    if (callback != null)
+                    {
+                        callback(finfo.Name, finfo.FullName);
+                    }
+                }
+            }
+            DirectoryInfo[] sub_dirs = dir.GetDirectories();
+            foreach (DirectoryInfo sub_dir in sub_dirs)
+            {
+                WalkLuaFiles(sub_dir.FullName, callback);
+            }
+
+        }
+#endif
     }
 }

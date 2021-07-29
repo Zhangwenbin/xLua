@@ -13,6 +13,7 @@ Assets/xLuaTest/
 /build/build*
 UnityVS
 /Assets/UnityVS.meta
+/obj
 .DS_Store
 *.o
 /build/*/*.a
