@@ -4,7 +4,6 @@ namespace BehaviorDesigner.Runtime.Tasks
                      "The difference is that the parallel task will run all of its children tasks simultaneously versus running each task one at a time. " +
                      "Like the sequence class, the parallel task will return success once all of its children tasks have return success. " +
                      "If one tasks returns failure the parallel task will end all of the child tasks and return failure.")]
-    [HelpURL("http://www.opsive.com/assets/BehaviorDesigner/documentation.php?id=27")]
     [TaskIcon("{SkinColor}ParallelIcon.png")]
     public class Parallel : Composite
     {
