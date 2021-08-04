@@ -18,5 +18,6 @@ namespace BehaviorDesigner.Editor.ObjectDrawers
                 value = EditorGUILayout.IntSlider(label, (int)value, intSliderAttribute.min, intSliderAttribute.max);
             }
         }
+        
     }
 }

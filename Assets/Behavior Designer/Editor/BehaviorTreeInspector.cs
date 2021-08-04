@@ -7,5 +7,6 @@ namespace BehaviorDesigner.Editor
     public class BehaviorTreeInspector : BehaviorInspector
     {
         // intentionally left blank
+        
     }
 }
