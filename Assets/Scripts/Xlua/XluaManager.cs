@@ -20,6 +20,10 @@ namespace EG
             luaenv = new LuaEnv();
             luaenv.AddLoader((ref string filename) =>
             {
+                if (filename.Contains("emmy_core"))
+                {
+                    return null;
+                }
                 if (mLuaFileMap.ContainsKey(filename))
                 {
                     string fullPath = mLuaFileMap[filename];
